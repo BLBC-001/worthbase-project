@@ -1,0 +1,476 @@
+# 家底 WorthBase
+
+<p align="center">
+  <a href="./LICENSE"><img src="https://img.shields.io/github/license/callmebg/worthbase?color=blue" alt="License"></a>
+  <a href="https://github.com/callmebg/worthbase/releases"><img src="https://img.shields.io/github/v/release/callmebg/worthbase" alt="Release"></a>
+  <img src="https://img.shields.io/badge/platform-Android%20%7C%20iOS-brightgreen" alt="Platform">
+  <img src="https://img.shields.io/badge/Expo-SDK%2055-black" alt="Expo">
+  <a href="./CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen" alt="PRs Welcome"></a>
+</p>
+
+> 你有多少钱在各账户？你的东西值多少？养这些东西每月要花多少？
+>
+> *How much money do you have across accounts? What are your things worth? How much does it cost to own them?*
+
+一款**隐私优先、本地存储**的个人财务状态管理 App。不记每笔流水，而是回答三个核心问题：
+
+📖 [English](./README.en.md) | 中文
+
+---
+
+1. **我有多少钱** — 多账户余额集中展示，定期手动更新
+2. **我的东西值多少** — 实物资产估值追踪 + 持有成本智能计算
+3. **净资产趋势如何** — 历史快照折线图，目标进度追踪
+
+---
+
+## 截图
+
+<p align="center">
+  <img src="./docs/screenshots/dashboard.jpg" alt="总览" width="200">
+  <img src="./docs/screenshots/account.jpg" alt="账户" width="200">
+  <img src="./docs/screenshots/property.jpg" alt="资产" width="200">
+  <img src="./docs/screenshots/setting.jpg" alt="设置" width="200">
+</p>
+
+---
+
+## 功能特性
+
+### 账户余额管理
+- 支持微信、支付宝、银行卡、现金、基金、信用卡、贷款、其他 8 种账户类型
+- 支持负债账户（信用卡、贷款），余额可为负数
+- 定期手动更新余额，每次更新自动存为快照
+- 多账户余额汇总，一键查看账户余额总额
+
+### 净资产趋势分析
+- 基于历史余额快照生成净资产趋势折线图（支持手势缩放、拖拽平移、点击查看数值、全屏横屏模式）
+- 多种时间范围选择：3 个月 / 6 个月 / 1 年 / 年初至今 / 全部 / 自定义区间
+- 降采样算法保留峰谷，最多 24 个数据点确保流畅渲染
+- 净资产 = 账户余额 + 资产估值
+- 净资产目标设定（总览页 Bottom Sheet）与进度条可视化
+- 目标达成预测：基于最近 6 个数据点线性回归估算达成日期
+
+### 实物资产管理
+- 8 种资产分类：车辆、房产、电子产品、数码、家居、奢侈品、贵金属、其他
+- 资产生命周期管理：使用中 → 退役 / 已售
+- 估值追踪：可选开启，记录估值历史变化曲线
+- 卖出结算：自动计算购入价、卖价、贬值金额、累计持有成本、真实净支出、日均成本
+
+### 持有成本智能计算（核心特色）
+4 种分摊方式，每个资产可自由选择：
+
+| 方式 | 公式 | 特点 |
+|------|------|------|
+| 简单线性分摊 | 购入价 ÷ 已持有月数 | 月成本随时间递减 |
+| 预期寿命分摊 | 购入价 ÷ 预期使用月数 | 每月固定 |
+| 残值分摊 | (购入价 − 预估残值) ÷ 预期使用月数 | 每月固定，考虑残值 |
+| 不分摊 | 0 | 仅计算经常性支出和维护费用 |
+
+持有成本 = 分摊成本 + 经常性支出（当月生效项之和）+ 一次性维护费用（如选纳入分摊则摊销）
+
+- **经常性支出**：话费、油费、保险等，支持生效区间设置
+- **一次性维护**：维修、保养等，可选纳入分摊或仅记录
+- **月/日双视角**：同时展示月持有成本和日均持有成本
+- **汇总面板**：所有资产月持有成本总计，直观展示"养你所有的东西要多少钱"
+
+### 次均成本追踪（v1.4 新增）
+用「使用次数」给每次使用赋予价值感：
+
+- **一键记录**：资产卡片和详情页都有 `+1` 按钮，点一下就算一次使用，无需填表。每天每件物品限一次，防止误触
+- **按需开启**：每个资产独立开关，默认关闭——房子沙发类不需要次均追踪的不打扰
+- **次均成本 = 购买价格 ÷ 使用次数**：每次使用成本越低，说明买得越值
+- **闲置提醒**：90 天以上未使用的物品自动标黄，提醒"该用用了"或"不如卖了回血"
+- **里程碑庆祝**：次均成本跌破 ¥500 / ¥200 / ¥100 / ¥50 时自动 🎉 提示
+- **使用历史**：详情页展示使用记录时间线和次均成本下降趋势
+- **仪表盘洞察**：首页"次均成本洞察"卡片，一眼看到最贵单次 vs 闲置物品
+- **下拉彩蛋**：总览页下拉随机显示理财吉祥话
+
+> 💡 特别适合那些"频率不高但又买回来的花里胡哨的东西"——用一次回本一次的心理，能提高使用率，也能避免下一次冲动消费。
+
+<p align="center">
+  <img src="./docs/screenshots/calc.jpg" alt="持有成本计算" width="200">
+  <img src="./docs/screenshots/calc2.jpg" alt="持有成本详情" width="200">
+  <img src="./docs/screenshots/calc3.jpg" alt="持有成本详情" width="200">
+  <img src="./docs/screenshots/calc4.jpg" alt="持有成本详情" width="200">
+</p>
+
+### 数据安全
+- **完全本地存储**：无服务器、无账号注册、无数据上传
+- **应用锁**：PIN 码 + 生物识别（指纹 / Face ID）
+- **自动备份**：退出 App 时自动备份 SQLite 数据库副本（保留最近 3 份）
+- **导入导出**：支持 JSON（完整备份）和 CSV（可读导出）格式，导入时支持预览与合并/替换策略
+
+### 外观
+- 深色模式（跟随系统 / 浅色 / 深色）
+- 4 种主题颜色可选（紫 / 蓝 / 绿 / 橙）
+- Material Design 3 设计语言（基于 react-native-paper）
+- 货币符号可自定义
+
+---
+
+## 技术栈
+
+| 类别 | 技术 |
+|------|------|
+| 框架 | React Native 0.83 + Expo SDK 55 |
+| 语言 | TypeScript 5.9 |
+| 路由 | Expo Router (File-based) |
+| 数据库 | expo-sqlite (SQLite) |
+| 状态管理 | Zustand |
+| UI 组件库 | react-native-paper (Material Design 3) |
+| 图表 | react-native-chart-kit + react-native-svg |
+| 图标 | lucide-react-native |
+| 手势 | react-native-gesture-handler + react-native-reanimated |
+| 底部弹窗 | @gorhom/bottom-sheet |
+| 安全锁 | expo-local-authentication + expo-secure-store |
+| 构建工具 | EAS Build |
+| 测试 | Jest + ts-jest + @testing-library/react-native |
+
+---
+
+## 快速开始
+
+### 环境要求
+
+- Node.js >= 20（项目含 `.nvmrc`，可用 nvm 管理版本）
+- npm
+- Android Studio（本地编译 Android 需要，含 JDK 17+）
+- Xcode（仅 macOS，本地编译 iOS 需要）
+
+### 安装依赖
+
+```bash
+git clone https://github.com/callmebg/worthbase.git
+cd worthbase
+npm install
+```
+
+### 开发模式运行
+
+最快的方式，无需编译原生代码：
+
+```bash
+npm start
+```
+
+然后在手机上安装 **Expo Go** App，扫描终端中的二维码即可运行。
+
+### 指定平台运行
+
+```bash
+# Android（需要连接模拟器或真机）
+npm run android
+
+# iOS（仅 macOS，需要 Xcode）
+npm run ios
+```
+
+---
+
+## 下载
+
+| 平台 | 方式 |
+|------|------|
+| Android | 前往 [GitHub Releases](https://github.com/callmebg/worthbase/releases) 下载 APK |
+| iOS | 需通过 EAS 自行编译（受 Apple 分发限制） |
+
+---
+
+## 版本管理
+
+发版前用脚本一键更新版本号，同步修改 3 处文件：
+
+```bash
+# 自动 versionCode +1
+./scripts/bump-version.sh 1.6.0
+
+# 手动指定 versionCode
+./scripts/bump-version.sh 1.6.0 10
+
+# 仅预览，不写入
+./scripts/bump-version.sh 1.6.0 --dry
+```
+
+更新的文件：
+
+| 文件 | 字段 |
+|------|------|
+| `package.json` | `version` |
+| `app.json` | `expo.version` |
+| `android/app/build.gradle` | `versionCode` + `versionName` |
+
+> `app/settings.tsx` 通过 `expo-constants` 动态读取版本，无需手动更新。
+
+## 构建
+
+### EAS 云端构建（推荐）
+
+无需本地配置 Android Studio / Xcode，在 Expo 云端编译：
+
+```bash
+# 安装 EAS CLI
+npm install -g eas-cli
+
+# 登录 Expo 账号
+eas login
+
+# 构建 Android APK（预览版）
+eas build --profile preview --platform android
+
+# 构建 iOS
+eas build --profile preview --platform ios
+```
+
+`eas.json` 中已配置三档构建 profile：
+
+| Profile | 用途 | Android | iOS |
+|---------|------|---------|-----|
+| development | 开发调试 | APK | 模拟器 |
+| preview | 内部测试 | APK | — |
+| production | 上架商店 | AAB (App Bundle) | IPA |
+
+### 本地构建
+
+```bash
+# 生成原生项目
+npx expo prebuild --platform android
+
+# 编译 Release APK（通用，包含所有架构，体积较大）
+cd android
+./gradlew assembleRelease
+
+# 按架构构建（推荐，体积更小）
+./gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a      # 仅 64 位（现代设备）
+./gradlew assembleRelease -PreactNativeArchitectures=armeabi-v7a   # 仅 32 位（老设备）
+./gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a,armeabi-v7a  # 双架构
+```
+
+> 需要设置 `JAVA_HOME` 指向 JDK 17+，并配置 `ANDROID_HOME` 指向 Android SDK。
+> 指定单架构可将 APK 从 ~150 MB 降至 ~65 MB。
+
+---
+
+## 测试
+
+```bash
+npm test
+```
+
+运行 8 个测试套件、207 个单元测试，覆盖：
+
+- 持有成本计算引擎（4 种分摊策略、经常性支出区间、卖出结算、维护分摊）
+- 净资产计算（含负债账户负余额）
+- 分摊策略推荐（8 种分类 → 策略映射）
+- 数据库 Repository 层 CRUD
+- Zustand Store 状态管理（含负数余额）
+- 数据服务（备份 / 导出 / 导入）
+- UI 组件渲染
+- 认证服务
+- 输入验证（正数 / 负数 / 日期 / 月份）
+- 引擎边界条件
+
+---
+
+## 项目结构
+
+```
+worthbase/
+├── app/                        # 页面路由（Expo Router）
+│   ├── _layout.tsx             #   根布局（Tab 导航 + AppState 自动备份）
+│   ├── index.tsx               #   总览面板（净资产 + 趋势图 + 持有成本汇总）
+│   ├── accounts.tsx            #   账户管理（含负债账户）
+│   ├── assets.tsx              #   资产管理
+│   └── settings.tsx            #   设置（从总览页齿轮图标进入）
+├── src/
+│   ├── components/             # UI 组件
+│   │   ├── ui/                 #   基础 UI 组件库（Button, Card, Chip, FAB, BottomSheet 等）
+│   │   ├── AddAssetModal.tsx   #   添加资产表单（快捷模式 + 完整模式）
+│   │   ├── AssetDetailModal.tsx#   资产详情弹窗
+│   │   ├── DatePickerField.tsx #   日期选择器组件
+│   │   ├── TimeRangeSheet.tsx  #   时间区间选择底部弹窗
+│   │   ├── SettlementModal.tsx #   卖出结算弹窗
+│   │   ├── HoldingCostBreakdown.tsx # 持有成本三层分解
+│   │   ├── InteractiveTrendChart.tsx # 可交互趋势折线图（缩放/拖拽）
+│   │   ├── ValuationChart.tsx  #   估值历史折线图
+│   │   ├── OnboardingView.tsx  #   首次使用引导
+│   │   └── LockScreen.tsx      #   应用锁界面
+│   ├── db/                     # 数据库层
+│   │   ├── schema.ts           #   8 张表建表语句 + 索引
+│   │   ├── client.ts           #   SQLite 连接
+│   │   ├── migrations.ts       #   迁移管理
+│   │   └── *-repository.ts     #   各表 Repository（CRUD）
+│   ├── engine/                 # 计算引擎（策略模式）
+│   │   ├── strategies/         #   4 种分摊策略实现
+│   │   ├── HoldingCostCalculator.ts       # 持有成本汇总
+│   │   ├── UsageCalculator.ts              # 次均成本计算
+│   │   ├── NetWorthCalculator.ts          # 净资产计算
+│   │   ├── SettlementCalculator.ts        # 卖出结算
+│   │   ├── RecurringExpenseCalculator.ts  # 经常性支出区间
+│   │   └── MaintenanceCalculator.ts       # 维护分摊
+│   ├── stores/                 # Zustand 状态管理（account / asset / settings）
+│   ├── services/               # 数据服务（备份 / 导出 / 导入 / 认证）
+│   ├── hooks/                  # 自定义 Hook（数据库初始化）
+│   ├── theme/                  # 主题系统（颜色 / 排版 / 间距 / 图标 / tokens）
+│   ├── types/                  # 类型定义（enums, models）
+│   └── utils/                  # 工具函数（加密 / 格式化 / 校验）
+├── __tests__/                  # 单元测试（8 套件 / 207 用例）
+│   ├── helpers/                #   测试辅助工具（mock-database 等）
+├── assets/                     # 应用图标和启动画面
+├── app.json                    # Expo 配置
+├── eas.json                    # EAS Build 配置
+├── jest.config.js              # Jest 配置
+└── tsconfig.json               # TypeScript 配置
+```
+
+### 架构分层
+
+```
+┌─────────────────────────────────────────────────────┐
+│                    UI 层                              │
+│  app/*.tsx + src/components/                         │
+│  Expo Router 三 Tab 导航 + Paper MD3 组件            │
+├─────────────────────────────────────────────────────┤
+│                  状态管理层                            │
+│  src/stores/ (Zustand)                               │
+│  account-store · asset-store · settings-store        │
+├─────────────────────────────────────────────────────┤
+│                   计算引擎层                           │
+│  src/engine/                                         │
+│  ┌─────────────┐  ┌──────────────┐  ┌────────────┐ │
+│  │ 分摊策略     │  │ 经常性支出   │  │ 一次性维护  │ │
+│  │ (4种实现)    │  │ (区间计算)   │  │ (分摊逻辑)  │ │
+│  └─────────────┘  └──────────────┘  └────────────┘ │
+│  ┌─────────────┐                                    │
+│  │ 次均成本     │  ← v1.4 新增                       │
+│  │ UsageCalc    │                                    │
+│  └─────────────┘                                    │
+│  持有成本 = 分摊 + 经常性支出 + 维护分摊               │
+├─────────────────────────────────────────────────────┤
+│                   数据层                              │
+│  src/db/ (expo-sqlite)                               │
+│  8 张表 (schema v8)：accounts · balance_snapshots ·  │
+│  assets · recurring_expenses · maintenance_records ·│
+│  valuation_history · usage_records · settings       │
+└─────────────────────────────────────────────────────┘
+```
+
+引擎**实时计算**，不预存结果。每次打开页面时根据当前日期动态计算月成本、累计、剩余等。
+
+---
+
+## 贡献
+
+欢迎提交 Issue 和 Pull Request！详见 [CONTRIBUTING.md](./CONTRIBUTING.md)。
+
+安全问题请参见 [SECURITY.md](./SECURITY.md)。
+
+### 开发约定
+- TypeScript 严格模式
+- 路径别名 `@/` → `src/`
+- 计算引擎的扩展通过实现策略接口完成（参见 `src/engine/strategies/`）
+- 新功能请配套单元测试
+
+---
+
+## 开发指南
+
+### 添加新的分摊策略
+
+1. 在 `src/engine/strategies/` 下新建策略文件，实现 `AmortizationStrategy` 接口：
+
+```typescript
+// src/engine/strategies/MyNewStrategy.ts
+import type { AmortizationStrategy } from './AmortizationStrategy';
+import type { Asset } from '@/types/models';
+
+export const MyNewStrategy: AmortizationStrategy = {
+  calculateMonthlyCost(asset: Asset, currentDate: Date): number { /* ... */ },
+  calculateAccumulated(asset: Asset, currentDate: Date): number { /* ... */ },
+  calculateRemaining(asset: Asset, currentDate: Date): number { /* ... */ },
+};
+```
+
+2. 在 `src/types/enums.ts` 的 `AmortizationType` 枚举中添加新类型
+3. 在 `src/engine/strategies/index.ts` 的 `strategyMap` 中注册
+4. 在 `__tests__/engine.test.ts` 中补充对应的单元测试
+
+### 数据库迁移
+
+修改表结构时，在 `src/db/migrations.ts` 中添加新迁移：
+
+```typescript
+{
+  version: 3,                // 版本号递增
+  description: '描述变更',
+  up: async (db) => {
+    await db.execAsync(`ALTER TABLE xxx ADD COLUMN yyy TEXT;`);
+  },
+},
+```
+
+迁移需**幂等**（重复执行不报错），并在 `CURRENT_VERSION` 常量中同步更新版本号。
+
+### 修改版本号
+
+发版时需同步更新以下 **4 个位置**：
+
+| # | 文件 | 字段 | 作用 |
+|---|------|------|------|
+| 1 | `package.json` | `"version"` | npm 包版本 |
+| 2 | `app.json` | `"version"` | Expo 配置，传递给原生构建 |
+| 3 | `android/app/build.gradle` | `versionName` | Android APK 显示的版本号 |
+| 4 | `app/settings.tsx` | `description="v..."` | 设置页 About 区域（硬编码） |
+
+另外需考虑：
+
+| # | 文件 | 字段 | 说明 |
+|---|------|------|------|
+| 5 | `android/app/build.gradle` | `versionCode` | Android 内部版本号，每次发版**必须递增**（Play Store 要求） |
+| 6 | `CHANGELOG.md` | 新增条目 | 记录该版本的变更内容 |
+
+> **注意**：`src/db/migrations.ts` 中的 `CURRENT_VERSION` 是数据库 schema 版本号，`src/services/export-service.ts` 中的 `version` 是导出格式版本号，二者与 App 版本号无关，仅在数据结构变更时更新。
+
+### 代码规范
+- 运行测试：`npm test`
+- TypeScript 严格模式，路径别名 `@/` → `src/`
+- 新功能请配套单元测试，保持覆盖率
+
+---
+
+## 📝 技术文章系列
+
+本项目的开发过程和核心实现写成了系列技术文章，分为两个轨道：
+
+### 轨道 A — 独立开发者实战（3 篇）
+
+| 文章 | 角度 | 文件 |
+|------|------|------|
+| 我花 600 元用 AI 做了一个本地优先的个人财务 App | 技术选型 + 核心实现 | [01-tech-angle.md](./docs/articles/marketing/01-tech-angle.md) |
+| 一个人 5 天从 0 到 1 做一个 App | 项目管理 + vibe coding | [02-pm-angle.md](./docs/articles/marketing/02-pm-angle.md) |
+| 三篇小红书推广开源 App 的真实数据 | 推广复盘 + 算法惩罚链 | [03-growth-retro.md](./docs/articles/marketing/03-growth-retro.md) |
+
+### 轨道 B — 技术深度文档（8 篇）
+
+| 文章 | 主题 | 文件 |
+|------|------|------|
+| 技术架构全解析 | 技术选型 + 项目结构 | [01-project-overview.md](./docs/articles/technical/01-project-overview.md) |
+| 持有成本 4 种分摊策略 | Strategy 模式 + 智能推荐 | [02-holding-cost.md](./docs/articles/technical/02-holding-cost.md) |
+| 本地优先架构实践 | SQLite + Repository + 自动备份 | [03-local-first-architecture.md](./docs/articles/technical/03-local-first-architecture.md) |
+| 净资产趋势可视化 | SVG 图表 + 手势交互 + 降采样 | [04-net-worth-visualization.md](./docs/articles/technical/04-net-worth-visualization.md) |
+| 资产生命周期管理 | 状态机 + 卖出结算算法 | [05-asset-lifecycle.md](./docs/articles/technical/05-asset-lifecycle.md) |
+| 多账户余额管理 | 8 种账户类型 + 负债 + 快照 | [06-account-balance.md](./docs/articles/technical/06-account-balance.md) |
+| React Native / Expo 开发体验 | 项目结构 + 跨平台 + EAS | [07-react-native-dx.md](./docs/articles/technical/07-react-native-dx.md) |
+| UI 组件库与设计系统 | Token 驱动 + 暗色模式 | [08-design-system.md](./docs/articles/technical/08-design-system.md) |
+
+---
+
+## License
+
+[MIT](./LICENSE) © callmebg
+
+---
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=callmebg/worthbase&type=Date)](https://star-history.com/#callmebg/worthbase)
